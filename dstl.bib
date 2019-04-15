@@ -1,0 +1,73 @@
+@inproceedings{akhtar_defense_2018,
+	address = {Salt Lake City, UT},
+	title = {Defense {Against} {Universal} {Adversarial} {Perturbations}},
+	isbn = {978-1-5386-6420-9},
+	url = {https://ieeexplore.ieee.org/document/8578455/},
+	doi = {10.1109/CVPR.2018.00357},
+	abstract = {Recent advances in Deep Learning show the existence of image-agnostic quasi-imperceptible perturbations that when applied to ‘any’ image can fool a state-of-the-art network classiﬁer to change its prediction about the image label. These ‘Universal Adversarial Perturbations’ pose a serious threat to the success of Deep Learning in practice. We present the ﬁrst dedicated framework to effectively defend the networks against such perturbations. Our approach learns a Perturbation Rectifying Network (PRN) as ‘pre-input’ layers to a targeted model, such that the targeted model needs no modiﬁcation. The PRN is learned from real and synthetic image-agnostic perturbations, where an efﬁcient method to compute the latter is also proposed. A perturbation detector is separately trained on the Discrete Cosine Transform of the input-output difference of the PRN. A query image is ﬁrst passed through the PRN and veriﬁed by the detector. If a perturbation is detected, the output of the PRN is used for label prediction instead of the actual image. A rigorous evaluation shows that our framework can defend the network classiﬁers against unseen adversarial perturbations in the real-world scenarios with up to 97.5\% success rate. The PRN also generalizes well in the sense that training for one targeted network defends another network with a comparable success rate.},
+	language = {en},
+	urldate = {2019-04-15},
+	booktitle = {2018 {IEEE}/{CVF} {Conference} on {Computer} {Vision} and {Pattern} {Recognition}},
+	publisher = {IEEE},
+	author = {Akhtar, Naveed and Liu, Jian and Mian, Ajmal},
+	month = jun,
+	year = {2018},
+	pages = {3389--3398},
+	file = {Akhtar et al. - 2018 - Defense Against Universal Adversarial Perturbation.pdf:/Users/mbenn/Zotero/storage/49Y2E9T8/Akhtar et al. - 2018 - Defense Against Universal Adversarial Perturbation.pdf:application/pdf}
+}
+
+@inproceedings{carlini_adversarial_2017,
+	address = {New York, NY, USA},
+	series = {{AISec} '17},
+	title = {Adversarial {Examples} {Are} {Not} {Easily} {Detected}: {Bypassing} {Ten} {Detection} {Methods}},
+	isbn = {978-1-4503-5202-4},
+	shorttitle = {Adversarial {Examples} {Are} {Not} {Easily} {Detected}},
+	url = {http://doi.acm.org/10.1145/3128572.3140444},
+	doi = {10.1145/3128572.3140444},
+	abstract = {Neural networks are known to be vulnerable to adversarial examples: inputs that are close to natural inputs but classified incorrectly. In order to better understand the space of adversarial examples, we survey ten recent proposals that are designed for detection and compare their efficacy. We show that all can be defeated by constructing new loss functions. We conclude that adversarial examples are significantly harder to detect than previously appreciated, and the properties believed to be intrinsic to adversarial examples are in fact not. Finally, we propose several simple guidelines for evaluating future proposed defenses.},
+	urldate = {2019-04-15},
+	booktitle = {Proceedings of the 10th {ACM} {Workshop} on {Artificial} {Intelligence} and {Security}},
+	publisher = {ACM},
+	author = {Carlini, Nicholas and Wagner, David},
+	year = {2017},
+	note = {event-place: Dallas, Texas, USA},
+	pages = {3--14}
+}
+
+@inproceedings{moosavi-dezfooli_universal_2017,
+	title = {Universal {Adversarial} {Perturbations}},
+	url = {http://openaccess.thecvf.com/content_cvpr_2017/html/Moosavi-Dezfooli_Universal_Adversarial_Perturbations_CVPR_2017_paper.html},
+	urldate = {2019-04-15},
+	author = {Moosavi-Dezfooli, Seyed-Mohsen and Fawzi, Alhussein and Fawzi, Omar and Frossard, Pascal},
+	year = {2017},
+	pages = {1765--1773},
+	file = {Full Text PDF:/Users/mbenn/Zotero/storage/XB3ZTAMS/Moosavi-Dezfooli et al. - 2017 - Universal Adversarial Perturbations.pdf:application/pdf;Snapshot:/Users/mbenn/Zotero/storage/ZBS6LRVH/Moosavi-Dezfooli_Universal_Adversarial_Perturbations_CVPR_2017_paper.html:text/html}
+}
+
+@article{perolat_playing_2018,
+	title = {Playing the {Game} of {Universal} {Adversarial} {Perturbations}},
+	url = {http://arxiv.org/abs/1809.07802},
+	abstract = {We study the problem of learning classifiers robust to universal adversarial perturbations. While prior work approaches this problem via robust optimization, adversarial training, or input transformation, we instead phrase it as a two-player zero-sum game. In this new formulation, both players simultaneously play the same game, where one player chooses a classifier that minimizes a classification loss whilst the other player creates an adversarial perturbation that increases the same loss when applied to every sample in the training set. By observing that performing a classification (respectively creating adversarial samples) is the best response to the other player, we propose a novel extension of a game-theoretic algorithm, namely fictitious play, to the domain of training robust classifiers. Finally, we empirically show the robustness and versatility of our approach in two defence scenarios where universal attacks are performed on several image classification datasets -- CIFAR10, CIFAR100 and ImageNet.},
+	urldate = {2019-04-15},
+	journal = {arXiv:1809.07802 [cs, stat]},
+	author = {Perolat, Julien and Malinowski, Mateusz and Piot, Bilal and Pietquin, Olivier},
+	month = sep,
+	year = {2018},
+	note = {arXiv: 1809.07802},
+	keywords = {Computer Science - Computer Vision and Pattern Recognition, Computer Science - Machine Learning, Statistics - Machine Learning},
+	file = {arXiv\:1809.07802 PDF:/Users/mbenn/Zotero/storage/N5S5HBBU/Perolat et al. - 2018 - Playing the Game of Universal Adversarial Perturba.pdf:application/pdf;arXiv.org Snapshot:/Users/mbenn/Zotero/storage/RJTVBTPB/1809.html:text/html}
+}
+
+@article{shafahi_universal_2018,
+	title = {Universal {Adversarial} {Training}},
+	url = {http://arxiv.org/abs/1811.11304},
+	abstract = {Standard adversarial attacks change the predicted class label of an image by adding specially tailored small perturbations to its pixels. In contrast, a universal perturbation is an update that can be added to any image in a broad class of images, while still changing the predicted class label. We study the efficient generation of universal adversarial perturbations, and also efficient methods for hardening networks to these attacks. We propose a simple optimization-based universal attack that reduces the top-1 accuracy of various network architectures on ImageNet to less than 20\%, while learning the universal perturbation 13X faster than the standard method. To defend against these perturbations, we propose universal adversarial training, which models the problem of robust classifier generation as a two-player min-max game. This method is much faster and more scalable than conventional adversarial training with a strong adversary (PGD), and yet yields models that are extremely resistant to universal attacks, and comparably resistant to standard (per-instance) black box attacks. We also discover a rather fascinating side-effect of universal adversarial training: attacks built for universally robust models transfer better to other (black box) models than those built with conventional adversarial training.},
+	urldate = {2019-04-15},
+	journal = {arXiv:1811.11304 [cs]},
+	author = {Shafahi, Ali and Najibi, Mahyar and Xu, Zheng and Dickerson, John and Davis, Larry S. and Goldstein, Tom},
+	month = nov,
+	year = {2018},
+	note = {arXiv: 1811.11304},
+	keywords = {Computer Science - Computer Vision and Pattern Recognition, Computer Science - Cryptography and Security, Computer Science - Machine Learning},
+	file = {arXiv\:1811.11304 PDF:/Users/mbenn/Zotero/storage/377IJ3AC/Shafahi et al. - 2018 - Universal Adversarial Training.pdf:application/pdf;arXiv.org Snapshot:/Users/mbenn/Zotero/storage/V3QSMCWP/1811.html:text/html}
+}
