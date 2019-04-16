@@ -1,0 +1,36 @@
+\subsection{Universal adversarial training}
+
+Based on the universal adversarial training technique of \cite{shafahi_universal_2018} that we reviewed above and started to implement ourselves we have several suggestions as to how one might continue research in this direction. 
+
+Firstly one could consider ... . We consider an image classifier $f_c(w_c,\cdot)$ with system variables $w_c$ and loss function $\ell_c(w_c, \cdot, \cdot)$. On the other hand consider an attacker $f_a(w_a,\cdot)$ ... 
+
+\begin{algorithm}
+\caption{Adversarial Training for Universal Perturbations 2.0}\label{Alg_4}
+
+ \textbf{Input}: : Training samples $X$, perturbation bound $\varepsilon$, learning rate $\tau$, momentum $\mu$ \\
+\begin{algorithmic}[1]
+%\State Initialise $\delta \gets 0$
+
+
+%\While{$\mathbb{P}((f(w, x) \neq f(w, x + \delta)) \geq 1-\xi$}  
+%\EndWhile
+
+\For{epoch$-1,...,N_{ep}$} 
+
+\For{minibatch $B \subset X$} \\
+\hspace{\algorithmicindent} Update $w$ with momentum stochastic gradient \\
+\hspace{\algorithmicindent} \hspace{\algorithmicindent} $g_c \gets \mu_c g_c - \mathbb{E}_{x \in B} [\nabla_{w_c} \ell(w_c,f_a(w_a,x+\delta))]$ \\
+\hspace{\algorithmicindent} \hspace{\algorithmicindent} $w_c \gets w_c + \tau_c g_{w_c}$ \\
+\hspace{\algorithmicindent} Update $\delta$ with stochastic gradient ascent \\
+\hspace{\algorithmicindent} \hspace{\algorithmicindent}  $g_a \gets \mu_a g_a - \mathbb{E}_{x \in B} [\nabla_{w_a} \ell(w_a,f_c(w_c,x+\delta))]$ \\
+\hspace{\algorithmicindent} \hspace{\algorithmicindent} $w_a \gets w_a + \tau_a g_{w_a}$
+\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+For another a potential extension of the universal adversarial training model (see description above) one could replace the perturbation with a generative adversarial network (GAN), i.e.
+
+$$ \min_{w_1} \max_{w_2} \frac1N \sum_{i = 1}^N \ell(w_1, x_i + D(w_2)) ,$$
+
+where $D$ denotes the generative network. One important aspect is that the output layer of this network ensures that the output is bounded (for example in terms of an $\ell^p$-ball of radius $\varepsilon$). 

@@ -168,204 +168,44 @@ Write the executive summary here. This is similar to an abstract for an academic
 %-------------------------------------------------------------------------------
 % BODY
 %-------------------------------------------------------------------------------
-\section{Introduction}
+
 % Edit sections depending on the nature of your problem and solution.
 % USE PRESENTATION FROM LAST DAY TO PROVIDE THE BASIS FOR THE STRUCTURE OF THE BODY OF THE WRITE-UP
+
+\input{introduction.tex}
 
 \section{Problem description}
 Give a description of the problem
 
-\subsection{Adversarial attacks on a trained system}
+\input{adversarialattack}
 
-\subsection{Data poisoning}
+\input{datapoisoning}
 
-\subsection{Literature review}
-Maybe this can be done within the previous two sections already?
+\input{literaturereview}
 
 \section{Description of approaches}
 
-\subsection{Preprocessing techniques}
+\input{preprocessing_description.tex}
 
-\subsection{Universal adversarial training}
+\input{uat_description.tex}
 
-\subsubsection{A brief review of \cite{shafahi_universal_2018}}
-
-Standard white-box adversarial attacks change the predicted class label of an image by tailoring small perturbations to it. On the other hand a universal perturbation attack is an update that can be added to any image (in a broad class) whilst still changing the predicted class label. As of this report there appears to have been little work done in the direction of defending against universal perturbation attacks. A study of this problem hs been carried out by Akhtar et al. \cite{akhtar_defense_2018} in which image pre-processing is usggested as a form of defence but it has been shown that this defense can be easily overcome if the attacker is aware that a defense network is being used \cite{carlini_adversarial_2017}. There is also recent work \cite{perolat_playing_2018} which models the defense as a two-player min-max game. Similar to usual adversarial training they iteratively generate a universal perturbation after each update of the DNN parameters which is very expensive. The approach in \cite{shafahi_universal_2018} also models the defense as a two-player min-max game but with a simple optimisation based universal attack which is much faster and more scalable.
-
-The best known approach for producing universal perturbations is that of Moosavi-Dezfooli et al. \cite{moosavi-dezfooli_universal_2017}, in this one seeks small perturbations which fool the classifier on almost all data points on some sample. For this they search for a pertubation constrained by size (in some $\ell_p$-norm) and that by achieving a quantified fooling rate.  More precisely, given a training set of samples $X=\{ x_i | i=1,...,N \}$ and a network $f(w,\cdot)$ with frozen parameter $w$ it is proposed to find universal perturbations $\delta$ satisfying 
-$$\| \delta \| \leq \varepsilon, \quad \text{and} \quad \mathbb{P}(f(w, x) \neq f(w, x + \delta)) \geq 1-\xi,$$
-for some given parameter $\xi$. This is then solved by an iterative method, see Algorithm \ref{Alg_1} below, which relies on an expensive inner loop and an outer loop that is not guaranteed to converge.  
-
-%\includegraphics[scale=0.2,angle=-90,origin=c]{Alg_1.pdf}
-
-\begin{algorithm}
-\caption{Standard Iterative Solver for Universal Perturbations}\label{Alg_1}
-\begin{algorithmic}[1]
-%\Procedure{MyProcedure}{}
-%\State $\textit{stringlen} \gets \text{length of }\textit{string}$
-%\State $i \gets \textit{patlen}$
-\State Initialise $\delta \gets 0$
-
-\While{$\mathbb{P}((f(w, x) \neq f(w, x + \delta)) \geq 1-\xi$}  
-%\EndWhile
-
-\For{$x_i \in X$} 
-%\EndFor
-
-\If{$f(w,x_i+\delta) \neq f(w,x_i)$} \\ 
-\hspace{\algorithmicindent} Solve $\min_r \|r\|_2$ s.t.  $f(w,x_i+\delta+r) \neq f(w,x_i)$ by DeepFool \\
-\hspace{\algorithmicindent} Update $\delta \gets \delta + r$, then project $\delta$ to $\ell_p$ ball
-\EndIf
-\EndFor
-\EndWhile
-
-%\If{$f(w,x_i+\delta) \neq f(w,x_i)$
-%\EndIf
-
-%\If {$i > \textit{stringlen}$} \Return false
-%\EndIf
-%\State $j \gets \textit{patlen}$
-
-%\If {$\textit{string}(i) = \textit{path}(j)$}
-%\State $j \gets j-1$.
-%\State $i \gets i-1$.
-%\State \textbf{goto} \emph{loop}.
-%\State \textbf{close};
-%\EndIf
-%\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
-%\State \textbf{goto} \emph{top}.
-%\EndProcedure
-\end{algorithmic}
-\end{algorithm}
-
-In \cite{shafahi_universal_2018} the following optimisation problem is instead considered, 
-$$\max_{\delta} \mathcal{L} (w,\delta) = \frac{1}{N} \sum_{i=1}^N \ell(w,x_i + \delta) \quad \text{s.t.} \quad \| \delta \|_p \leq \varepsilon,$$ 
-where $\ell$ is a loss function representing the loss used to train a DNN. This simple formulation searches for a universal perturbation which maximises the training loss. Unfortunately in this set-up the cross-entropy loss is unbounded from above which can mean a perturbation that misclassifies just a single image can maximise the above problem. To avoid this it is suggested that one should clip the entropy loss as follows, 
-$$\tilde{\ell}(w,x_i + \delta) = \min \{ \ell(w,x_i+\delta), \beta \}.$$ 
-This idea is based on a standard stochastic gradient method that comes with convergence guarantees when a decreasing learning rate is used. They directly solve the maximisation problem by SGM, each iteration begins by using gradient ascent to update the universal perturbation to maximise loss, then this perturbation is projected onto the $\ell_p$-norm ball to prevent it from growing too large, this is summarised in Algorithm \ref{Alg_2} below. This method is tested by attacking a naturally trained WideResnet CIFAR-10 model whichh has a clean test accuracy of 95.2\%. They found that accuracies after adding universal perturbation (with $\varepsilon =8$) were 42.56\% for SGD perturbation, 13.08\% for MSGD, 13.3\% for ADAM and 13.17\% for PGD.
-\begin{algorithm}
-\caption{Standard Iterative Solver for Universal Perturbations}\label{Alg_2}
-\begin{algorithmic}[1]
-%\State Initialise $\delta \gets 0$
-
-%\While{$\mathbb{P}((f(w, x) \neq f(w, x + \delta)) \geq 1-\xi$}  
-%\EndWhile
-
-\For{epoch$-1,...,N_{ep}$} 
-
-\For{minibatch $B \subset X$} \\
-\hspace{\algorithmicindent} Update $\delta$ with gradient variant $\delta \gets \delta + g$ \\
-\hspace{\algorithmicindent} Project $\delta$ to $\ell_p$ ball
-
-
-\EndFor
-\EndFor
-\end{algorithmic}
-\end{algorithm}
-
-The next step is to train against universal perturbations, this is done by modelling the problem as a two-player zero sum game. This is formulated as a min-max optimisation problem, $$ \min_w \max_{\delta} \frac1N \sum_{i = 1}^N \ell(w, x_i + \delta) \quad \text{subject to} \quad \| \delta \|_p \leq \varepsilon \, ,$$ where $w$ represents the network weights, $X=\{x_i|i =1,...,N \}$ represents the training samples (of batch size $N$) and $\ell$ is the loss function. The authors propose to solve this problem by alternating stochastic gradient methods, iterating alternate updates of the network weights using gradient descent with updates of the universal perturbation using gradient ascent. Notice here that $w$ and $\delta$ are updated only once per setp with the updates accumulating for both $w$ and $\delta$, in particular there is no expensive inner loop. They found that the following FGSM update rule (for updating $\delta$) was most effective when combined with the SGD optimiser for updating $w$,
-$$\text{FGSM} \quad \delta \leftarrow \delta + \varepsilon \, \text{sign}(\mathbb{E}_{x \in B}[\nabla_{\delta} \ell(w, x + \delta)]).$$ 
-The training curves for the universal adversarial training process on the Wide Resnet model using the CIFAR-10 dataset is presented. Below we include the first curve of figure 4 of \cite{shafahi_universal_2018} which shows the training cuvre with FGSM used for the universal perturbation maximisation.
-\begin{figure}[b] 
-\caption{The training cuvre with FGSM used for the universal perturbation maximisation}
-%\includegraphics[scale=.41,angle=-90,origin=c]{Fig_4.pdf}
-\centering
-\end{figure}
-\begin{algorithm}
-\caption{Adversarial Training for Universal Perturbations}\label{Alg_3}
-
- \textbf{Input}: : Training samples $X$, perturbation bound $\varepsilon$, learning rate $\tau$, momentum $\mu$ \\
-\begin{algorithmic}[1]
-%\State Initialise $\delta \gets 0$
-
-
-%\While{$\mathbb{P}((f(w, x) \neq f(w, x + \delta)) \geq 1-\xi$}  
-%\EndWhile
-
-\For{epoch$-1,...,N_{ep}$} 
-
-\For{minibatch $B \subset X$} \\
-\hspace{\algorithmicindent} Update $w$ with momentum stochastic gradient \\
-\hspace{\algorithmicindent} \hspace{\algorithmicindent} $g_w \gets \mu g_w - \mathbb{E}_{x \in B} [\nabla_w \ell(w,x+\delta)]$ \\
-\hspace{\algorithmicindent} \hspace{\algorithmicindent} $w \gets w + \tau g_w$ \\
-\hspace{\algorithmicindent} Update $\delta$ with stochastic gradient ascent \\
-\hspace{\algorithmicindent} \hspace{\algorithmicindent} $\delta \gets \delta + \varepsilon \text{sign}(\mathbb{E}_{x \in B}[\nabla_{\delta} \ell(w,x + \delta)])$ \\
-\hspace{\algorithmicindent} Project $\delta$ to $\ell_p$ ball
-
-
-\EndFor
-\EndFor
-\end{algorithmic}
-\end{algorithm}
-
-To test the robustness the authors compare the universally trained model's robustness with other hardened models against white-box attacks. These models are attacked with both universal perturbation attacks and per-instance attacks, specifically FGSM, R-FGSM and PGD (projected gradient descent) are used. It is important to remark that PGD is an attack which iteratively applies FGSM multiple times and is considered to be one of the strongest per-instance attacks. There are models which are PGD trained and effective, but this is time consuming and does not appear to scale well. The White-box performance of hardened WideResnet models trained on CIFAR-10 are shown in figure \ref{table} below.
-%\begin{wrapfigure}{r}{0.25\textwidth}
-   % \centering
-    %\includegraphics[width=0.25\textwidth,scale=.3]{blackboxtable_1.png}
-%\end{wrapfigure} 
-As one can see the model is most robust against universal perturbation attacks as one would expect. Interestingly it has moderate robustness against PGD attacks whilst having similar computational costs to the non-iterative FGSM and R-FGSM attacks both of which PGD fools almost every time. 
-\begin{figure}[b] \label{table}
-\caption{ The White-box performance of hardened WideResnet models trained on CIFAR-10}
-%\includegraphics[width=7.5cm]{blackboxtable_1.png}
-\centering
-\end{figure}
-
-%\includegraphics[scale=.41,angle=-90,origin=c]{blackboxtable_1.pdf}
-
-Robustness of the universally trained model in the black-box attack scenario is also tested. It is found that they are also quite resistant to black-box per-instance attacks – achieving resistance comparable to 7-step PGD adversarial training at a fraction of the cost. Furthermore, per-instance adversarial examples built to attack the universally hardened model transfer to other black-box models very well.
-
-\subsection{Detection}
+\input{detection_description.tex}
 
 \section{Description of results}
 
-\subsection{Preprocessing techniques}
+\input{preprocessing_results.tex}
 
-\subsection{Universal adversarial training}
+\input{uat_results.tex}
 
-\subsection{Detection}
+\input{detection_results.tex}
 
 \section{Conclusions \& outlook}
 
-\subsection{Preprocessing techniques}
+\input{preprocessing_outlook.tex}
 
-\subsection{Universal adversarial training}
+\input{uat_outlook.tex}
 
-Based on the universal adversarial training technique of \cite{shafahi_universal_2018} that we reviewed above and started to implement ourselves we have several suggestions as to how one might continue research in this direction. 
-
-Firstly one could consider ... . We consider an image classifier $f_c(w_c,\cdot)$ with system variables $w_c$ and loss function $\ell_c(w_c, \cdot, \cdot)$. On the other hand consider an attacker $f_a(w_a,\cdot)$ ... 
-
-\begin{algorithm}
-\caption{Adversarial Training for Universal Perturbations 2.0}\label{Alg_4}
-
- \textbf{Input}: : Training samples $X$, perturbation bound $\varepsilon$, learning rate $\tau$, momentum $\mu$ \\
-\begin{algorithmic}[1]
-%\State Initialise $\delta \gets 0$
-
-
-%\While{$\mathbb{P}((f(w, x) \neq f(w, x + \delta)) \geq 1-\xi$}  
-%\EndWhile
-
-\For{epoch$-1,...,N_{ep}$} 
-
-\For{minibatch $B \subset X$} \\
-\hspace{\algorithmicindent} Update $w$ with momentum stochastic gradient \\
-\hspace{\algorithmicindent} \hspace{\algorithmicindent} $g_c \gets \mu_c g_c - \mathbb{E}_{x \in B} [\nabla_{w_c} \ell(w_c,f_a(w_a,x+\delta))]$ \\
-\hspace{\algorithmicindent} \hspace{\algorithmicindent} $w_c \gets w_c + \tau_c g_{w_c}$ \\
-\hspace{\algorithmicindent} Update $\delta$ with stochastic gradient ascent \\
-\hspace{\algorithmicindent} \hspace{\algorithmicindent}  $g_a \gets \mu_a g_a - \mathbb{E}_{x \in B} [\nabla_{w_a} \ell(w_a,f_c(w_c,x+\delta))]$ \\
-\hspace{\algorithmicindent} \hspace{\algorithmicindent} $w_a \gets w_a + \tau_a g_{w_a}$
-\EndFor
-\EndFor
-\end{algorithmic}
-\end{algorithm}
-
-For another a potential extension of the universal adversarial training model (see description above) one could replace the perturbation with a generative adversarial network (GAN), i.e.
-
-$$ \min_{w_1} \max_{w_2} \frac1N \sum_{i = 1}^N \ell(w_1, x_i + D(w_2)) ,$$
-
-where $D$ denotes the generative network. One important aspect is that the output layer of this network ensures that the output is bounded (for example in terms of an $\ell^p$-ball of radius $\varepsilon$). 
-
-\subsection{Detection}
+\input{detection_outlook.tex}
 
 %-------------------------------------------------------------------------------
 % References
