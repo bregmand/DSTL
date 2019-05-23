@@ -1,5 +1,8 @@
 \subsection{Preprocessing techniques}
-In this section, we consider the attack information as noise in the image. We assume attackers tend to control the magnitude of their attacks so as not to be detected by the system, but make them effective enough to misguide the system to the wrong results. We then make use of this effect, and consider the problem from the image preprocessing perspective. We use different approaches, rescaling, bit-depth reduction and total variation, to remove the attack or adversarial perturbations in the input data before we fit into the net, and also try to maintain enough information for our net to give the right results.
+%In this section, we consider the attack information as noise in the image. We assume attackers tend to control the magnitude of their attacks so as not to be detected by the system, but make them effective enough to misguide the system to the wrong results. We then make use of this effect, and consider the problem from the image preprocessing perspective. We use different approaches, rescaling, bit-depth reduction, total variation and , to remove the attack or adversarial perturbations in the input data before we fit into the net, and also try to maintain enough information for our net to give the right results.
+
+In this section we consider a grey-box setting where the attacker knows the structure of the neural network for the image classifier, however during testing, we impose further transforms on test samples. This is designed to obscure the gradients so that adversarial perturbation effects can be reduced. We looked at a range of preprocessing techniques based on \cite{Guo18}: image resolution reduction, bit-depth reduction, total variation and randomised crop-and-rescale.
+
 
 \subsubsection{Bit-Depth Reduction} %reference needed here
 Bit-Depth reduction approach is to reduce the color depth in bits. We know that each RGB channel has 8-bits, which is possible to be reduced. We then consider removing the noise by reducing the original 8-bit images to fewer bits, as a try to remove the adversarial attack but not significantly destroying the recognisability of the images. 
@@ -24,4 +27,15 @@ Before we introduce the way doing bit-depth reduction, we notice that our input 
 We can see for MNIST database, even we reduce the color depth to just 1 bit, it is very clear and does not introduce human-observable loss. But for images in colored ImageNet, it do shows significant loss when we reduce the bit-depth to be less than 4, which can also be inferred from the decrease in the accuracy in the following results section. 
 
 \subsubsection{Total Variation}
+
+
+\subsubsection{Image Resolution Reduction}
+Most of the time, humans can make out numbers and objects from very low resolution images, this suggests that the defining features of classes are fairly general going from image to image. Therefore intuitively, we expect that if we decrease the resolution by scaling the image to a smaller size then rescaling back, using for example a bilinear interpolation, then the transformed image should still be recognisable (given that the scaling is not too extreme). Since this means there is a local pooling of information, it will be interesting to see if adding such a transformation to all test samples will be more robust against perturbation based attacks.
+
+\subsubsection{Randomised crop and rescaling}
+One way of obscuring the gradient of the neural network is to add some random operations during the testing. Randomised crop and rescaling involves taking a random crop of the original image and then rescale back to the desired size. Note that typically a range or proportion is specified so that the image post-cropping can still be recognisable as the original object. 
+
+The neural network is trained on the original images, but when it comes to testing, all test samples are subjected to random transform as described above. Often we take multiple random crop-and-rescaling of the same test image and feed all such transformed images into the neural network. We can then find some summary statistic from all the transformation to classify this image. For example, we can take the mode of the classification or find the maximum of the average sigmoid output value in the final layer of the neural network. 
+
+Of course this means that there are additional computation cost added to the testing phase. However since this is obscured to the attacker, an FGSM attack should be less effective. We also expect that increasing the number of transformed images on a test image should also increase accuracy.
 

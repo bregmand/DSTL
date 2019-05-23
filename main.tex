@@ -139,14 +139,15 @@ University of Cambridge Centre for Mathematical Sciences
 % Executive Summary
 %-------------------------------------------------------------------------------
 \begin{center}
-    \large\textbf{Report author}\\ % include the names of all those who contributed to the write up
+    \large\textbf{Report authors}\\ % include the names of all those who contributed to the write up
    \vskip1cm
     \normalsize Martin Benning (Queen Mary University of London) \\
     \normalsize Louis Bonthrone (University of Warwick)\\
     \normalsize Amizah Malip (University of Malaya)\\
     \normalsize Alex Wendland (University of Warwick)\\
     \normalsize Alexandru Puiu (University of Oxford)\\
-    \normalsize Joel Dyer (University of Oxford)
+    \normalsize Joel Dyer (University of Oxford)\\
+    \normalsize Lingyi Yang (University of Oxford)
 \end{center}
 \vskip2cm
 \begin{center}
@@ -169,6 +170,7 @@ Write the executive summary here. This is similar to an abstract for an academic
     \normalsize Amizah Malip (University of Malaya)\\
     \normalsize Lingyi Yang (University of Oxford)\\
     \normalsize Yu Tian (University of Oxford)\\
+    \normalsize Zhen Shao (University of Oxford)\\
     \normalsize Jonathan Ward (University of Leeds)\\
     \normalsize Alex Wendland (University of Warwick)
 \end{center}
@@ -189,7 +191,9 @@ Write the executive summary here. This is similar to an abstract for an academic
 \input{introduction.tex}
 
 \section{Problem description}
-Give a description of the problem
+Since Alexnet in 2012, neural networks have been central in the research into image classification and more general problem of computer vision. Alongside the positive developments, flaws in neural networks soon surfaced in the form of adversarial examples \cite{Szegedy13}.
+
+There are different types of attacks on a system, some target the training of the network, and others focus on trained networks. Many different attack methods have emerged based on varying amount of knowledge an attacker has of the network architecture. We have identified the most relevant cases when the scenario at hand involves the outsourcing of training the neural networks. Over the course of the ESGI, we focus mainly on two types of attacks, white-box attacks like FGSM and data poisoning.
 
 \input{adversarialattack}
 
