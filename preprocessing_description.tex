@@ -1,5 +1,5 @@
 \subsection{Preprocessing techniques}
-In this section, we consider the attack information as noise in the image. We assume attackers tend to control the magnitude of their attacks so as not to be detected by the system, but make them effective enough to misguide the system to the wrong results. We then make use of this effect, and consider the problem from the image preprocessing perspective. We use different approaches, rescaling, bit-depth reduction and total variation, to remove the attack or adversarial perturbations in the input data before we fit into the net, and also try to maintain enough information for our net to give the right results.
+In this section, we consider the attack information as noise in the image. We assume attackers tend to control the magnitude of their attacks so as not to be detected by the system, but make them effective enough to misguide the system to the wrong results. We then make use of this effect, and consider the problem from the image preprocessing perspective. We use different approaches, bit-depth reduction, smoothing filter and total variation minimisation, to remove the attack or adversarial perturbations in the input data before we fit into the net, and also try to maintain enough information for our net to give the right results.
 
 \subsubsection{Bit-Depth Reduction} %reference needed here
 Bit-Depth reduction approach is to reduce the color depth in bits. We know that each RGB channel has 8-bits, which is possible to be reduced. We then consider removing the noise by reducing the original 8-bit images to fewer bits, as a try to remove the adversarial attack but not significantly destroying the recognisability of the images. 
@@ -18,13 +18,13 @@ Before we introduce the way doing bit-depth reduction, we notice that our input 
 	\end{subfigure}
 	\begin{subfigure}{.35\textwidth}
 		\includegraphics[width=\textwidth]{bit1-7.png}
-		\caption{bit-one image}
+		\caption{bit-two image}
 		\label{fig: bit-depth reduction 8}
 	\end{subfigure}
 	\caption{Bit-depth reduction image}
 \end{figure}
 
-We can see for MNIST database, even we reduce the color depth to just 1 bit, it is very clear and does not introduce human-observable loss. But for images in colored ImageNet, it do shows significant loss when we reduce the bit-depth to be less than 4, which can also be inferred from the decrease in the accuracy in the following results section. 
+We can see for MNIST database, even we reduce the color depth to just 2 bit, it is very clear and does not introduce human-observable loss. But for images in colored ImageNet, it do shows significant loss when we reduce the bit-depth to be less than 4, which can also be inferred from the decrease in the accuracy in the following results section. 
 
 
 \subsubsection{Median, LAP and LAR Smoothing Filters}
@@ -33,15 +33,16 @@ It has been shown that by implementing median filtering, local average with neig
 \begin{figure}[h!]
 	\centering
 		\includegraphics[width=.72\textwidth]{Diagram1-cropped.pdf}
-		\caption{Original image}
-		\label{fig: Median}
+		
 	\caption{Median filtering to remove impulse (or salt-and-pepper) noise}
+	\label{fig: Median}
 \end{figure}
 
 
 
 \begin{figure}[h!]
 	\centering
+	
 	\begin{subfigure}{.3\textwidth}
 		\includegraphics[width=\textwidth]{Iorig.png}
 		\caption{Original image}
@@ -58,12 +59,16 @@ It has been shown that by implementing median filtering, local average with neig
 		\label{fig: LAPLAR3}
 	\end{subfigure}
 	\caption{Median filtering to remove impulse (or salt-and-pepper) noise}
+	\label{fig: MedianBeforeAfter}
 \end{figure}
-These standard noise filtering algorithms are easy to implement and can significantly retrieve correct classification confidence lost to the perturbations, whilst maintaining the visual structure of the image. Other similar forms of pre-processing include JPEG compression (lossy image compression) where the image is irreversibly encoded so as to reduce the file size, and image quilting where 
+These standard noise filtering algorithms are easy to implement and can significantly retrieve correct classification confidence lost to the perturbations, whilst maintaining the visual structure of the image. The median filtering process is outlined in Fig. \ref{fig: Median} and an example showing an input image with noise added which then undergoes denoising is shown in Fig. \ref{fig: MedianBeforeAfter}. Other similar forms of pre-processing include JPEG compression (lossy image compression) where the image is irreversibly encoded so as to reduce the file size, and image quilting where a new larger image (often used in texture mapping) is synthesised from a smaller input image \cite{efros2001image}.
 
 
 
 \subsubsection{Total Variance Minimisation}
+This technique assumes that signals with fluctuating and possibly inauthentic data result in a large total variation. This means that  we obtain a high value when we integrate the absolute gradient of a signal. Moreover, if we were to reduce the signal’s total variation assuming it is highly similar to the original, we may eliminate noisy data whilst maintaining the overall salient features of the image.
+
+
 
 \subsubsection{Defence GAN}
 In considering solutions to the pre-processing defence to adversarial attacks, in particular FGSM, we note that all our proposed methods are attempting in some way to smooth out the noise in a poisoned image and classify the result. An alternative is to ask can we classify a different image with the same semantic content as the poisoned image but without the poison.  This method suggests we could use a generative model of our dataset to generate in domain data which would remove any chance of classifying a poisoned image.  The remaining question is how to condition the generator to create images with the same semantic content of the poisoned image without introducing the poison to our approach?
