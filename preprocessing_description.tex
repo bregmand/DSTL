@@ -5,12 +5,9 @@ In this section we consider a grey-box setting where the attacker knows the stru
 
 
 \subsubsection{Bit-Depth Reduction} %reference needed here
-Bit-Depth reduction approach is to reduce the color depth in bits. We know that each RGB channel has 8-bits, which is possible to be reduced. We then consider removing the noise by reducing the original 8-bit images to fewer bits, as a try to remove the adversarial attack but not significantly destroying the recognisability of the images. 
+Bit-Depth reduction approach \cite{DBLP:journals/corr/XuEQ17} is to reduce the color depth in bits, as a try to remove the adversarial attack but not significantly destroying the recognisability of the images at the same time. 
 
-Before we introduce the way doing bit-depth reduction, we notice that our input values are in the range [0,1]. Then more specifically, for reducing from 8 bits to i bits, we first multiply the input data by ($2^i - 1$),then round to zeros, and scale the values back to the the range [0,1]. Hence we successfully reduce the information capacity from the original 8-bit to i-bit with the critical step of integer rounding. 
-
-
-
+Our input values are in the range [0,1]. We then apply the approach to reducing the image from 8 bits to i bits by, first multiplying the input data by ($2^i - 1$), then rounding to integers, and finally scaling the values back to the the range [0,1].
 
 \begin{figure}[h!]
 	\centering
@@ -21,13 +18,13 @@ Before we introduce the way doing bit-depth reduction, we notice that our input 
 	\end{subfigure}
 	\begin{subfigure}{.35\textwidth}
 		\includegraphics[width=\textwidth]{bit1-7.png}
-		\caption{bit-one image}
+		\caption{bit-two image}
 		\label{fig: bit-depth reduction 8}
 	\end{subfigure}
 	\caption{Bit-depth reduction image}
 \end{figure}
 
-We can see for MNIST database, even we reduce the color depth to just 1 bit, it is very clear and does not introduce human-observable loss. But for images in colored ImageNet, it do shows significant loss when we reduce the bit-depth to be less than 4, which can also be inferred from the decrease in the accuracy in the following results section. 
+We can see for MNIST database, even we reduce the color depth to two bits, it is very clear and does not introduce human-observable loss, which also encourages us apply it to defend our system. 
 
 
 \subsubsection{Median, LAP and LAR Smoothing Filters}
@@ -40,7 +37,7 @@ It has been shown that by implementing median filtering, local average with neig
 		\label{fig: Median}
 	\caption{Median filtering to remove impulse (or salt-and-pepper) noise}
 \end{figure}
-
+These standard noise filtering algorithms are easy to implement and can significantly retrieve correct classification confidence lost to the perturbations, whilst maintaining the visual structure of the image. Other forms of pre-processing methods which are also feature-preservative include JPEG compression (lossy image compression) where the image is irreversibly encoded so as to reduce the file size, and image quilting where a novel image is created by merging together smaller patches of images which already exist \cite{efros2001image}.
 
 
 \begin{figure}[h!]
@@ -62,11 +59,24 @@ It has been shown that by implementing median filtering, local average with neig
 	\end{subfigure}
 	\caption{Median filtering to remove impulse (or salt-and-pepper) noise}
 \end{figure}
-These standard noise filtering algorithms are easy to implement and can significantly retrieve correct classification confidence lost to the perturbations, whilst maintaining the visual structure of the image. Other similar forms of pre-processing include JPEG compression (lossy image compression) where the image is irreversibly encoded so as to reduce the file size, and image quilting where 
+Despite the promising experimental results these pre-processing filters have shown \cite{khalid2019fademl}, the percentage confidence allocated to a given classification is still eroded (albeit much less). Based on their own results, the same authors also developed a novel noise-Filter-aware Adversarial ML ($FAdeML$) attack which was able to trick a network into mis-classifying image data even after the application of these pre-processing algorithms. Clearly this research requires more work to quantify the effectiveness of pre-processing noise filters on combatting adversarial attacks (especially with the development of adversarial attacks which take noise filters into consideration), however it seems irrefutable that the benefits of using these filters far outweighs any minor degradation in image quality due to the filtering.
 
 
 
-\subsubsection{Total Variance Minimisation}
+\subsubsection{Total Variance Minimisation} 
+Another preprocessing approach we consider is a compressed sensing approach that drop pixels via total variation minimisation \cite{Rudin:1992:NTV:142273.142312}. This method selects a small portion of pixels randomly, and then replace it by minimising the variation from pixels nearby. Strictly speaking, we first select pixels by sampling a Bernoulli random variable $X(i,j,k)$ for pixel at the location $(i,j,k)$, set the value $p$ to control the amount of pixels chosen to change, and maintain the pixel if $X(i,j,k) = 1$. Then we replace the values in the chosen pixels by minimising the variation of the whole input image, the so called total variation, 
+\begin{align}
+	\min_{\mathbf{z}}||(1 - X) \odot (\mathbf{z} - \mathbf{x})||_2 + \lambda_{TV}\cdot TV_p{\mathbf{z}}.
+	\label{equ: tv obj}
+\end{align}
+Here $\odot$ denotes element-wise multiplication, and $TV_p{\mathbf{z}}$ represents the $L_p$-total variation of $\mathbf{z}$:
+
+\begin{align}
+	TV_p{\mathbf{z}} = \sum_{k = 1}^{K}\left[\sum_{i=2}^{N}||z(i,:,k) - z(i-1, :, k)||_p + \sum_{j = 2}^{N}||z(:,j,k) - z(:,k-1,k)||_p\right].
+\end{align}
+
+The total variation measures the amount of variation both column-wise and row-wise in the image $\mathbf{z}$, and the minimisation of it encourages the removal of small perturbations in the image, which coincides with the features we assume of adversarial perturbations. The objective function \ref{equ: tv obj} is convex in $\mathbf{z}$, hence we can solve for it efficiently, and in the following implementation we choose $p = 2$ and utilise a solver proposed by Chambolle \cite{Chambolle:2004:ATV:964969.964985}. 
+
 
 \subsubsection{Defence GAN}
 In considering solutions to the pre-processing defence to adversarial attacks, in particular FGSM, we note that all our proposed methods are attempting in some way to smooth out the noise in a poisoned image and classify the result. An alternative is to ask can we classify a different image with the same semantic content as the poisoned image but without the poison.  This method suggests we could use a generative model of our dataset to generate in domain data which would remove any chance of classifying a poisoned image.  The remaining question is how to condition the generator to create images with the same semantic content of the poisoned image without introducing the poison to our approach?

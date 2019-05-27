@@ -1,8 +1,8 @@
 \subsection{Preprocessing techniques}
-In this section, we have implemented the preprocessing techniques we described above to different level of attacks, to be more specific the $\epsilon$ in FGSM attack. We then plot the accuracy of our net, with various values of parameters in different techniques.
+In this section, we have implemented the preprocessing techniques described above to different levels of attack, to be more specific, the $\epsilon$ in FGSM attack and a higher $\epsilon$ represents a higher level of attack. Results of accuracy versus attack are provided below, with various values of parameters in different techniques.
 
 \subsubsection{Bit-Depth Reduction}
-
+The dataset used here is MNIST 28 by 28 images set with original channel 8 bits. The systems we use here are both the fully pretrained model with 98.1\% accuracy, and our manually trained model with 94.75\% accuracy in the original test set. We apply bit-depth reduction technique to the input images just before feeding our system, adding a preprocessing layer. 
 \begin{figure}[h!]
 	\centering
 	\begin{subfigure}{.4\textwidth}
@@ -18,9 +18,12 @@ In this section, we have implemented the preprocessing techniques we described a
 	\caption{Accuracy for different levels of noise we choose}
 \end{figure}
 
+We can see in both cases, bit-one reduction performs the best except we increase the adversarial level $\epsilon$ to 0.3 for the pretrained model, where its accuracy is less than 0.1, worse than random guess. Also, in both cases, as we decrease the bit for each channel, the relative accuracy increases, with some fluctuation. But it is shown that bit-depth reduction can introduct human-noticeable loss in more complex images for bits less than 4 \cite{DBLP:journals/corr/XuEQ17}. One interesting we notice here is that, although our manually trained model does not perform as well as the pretrained model in the original testing set, it is shown to be more robust to the adversarial attack, in the sense that its accuracy reduce slower for higher level adversarial attack. But in both cases, the accuracy is still lower than what we expect.  
 
 
-\subsubsection{Total Variation}
+\subsubsection{Total Variation Minimisation} 
+We use the same dataset and models here, and apply total variation minimisation technique with different weights which represent the portion expected portion to be replaced, $p = 2$ for $l_p$ norm, and the algorithm of Rudin, Fatemi and Osher that was proposed by Chambolle \cite{Chambolle:2004:ATV:964969.964985} for the optimisation. 
+
 \begin{figure}[h!]
 	\centering
 	\begin{subfigure}{.4\textwidth}
@@ -35,6 +38,10 @@ In this section, we have implemented the preprocessing techniques we described a
 	\end{subfigure}
 	\caption{Accuracy for different levels of noise we choose}
 \end{figure}
+
+The results have similar trend to bit-depth reduction for pretrained model, where the accuracy decrease rapidly when we increase the attack level $\epsilon$. But this time, results of all three weights in our pretrained model are significantly better than the original one.  And our manually trained model is also shown to be more robust to higher level of attack, and the case of low accuracy with even no adversarial attack may be because our model is not trained fully. Hence, for total variation minimisation, it help the system defend against attack more efficiently with the requirement that we have trained the model fully. 
+
+
 
 \subsubsection{Resolution reduction}
 
@@ -52,9 +59,10 @@ As per our description in methods section, we perform two resizing operations on
 We applied 30 randomised crop-and-rescale transformations onto each test subject and then feed all 30 transformed images into the neural network. We record the final classification of the original image as either the mode of the output classes or the class with the highest average sigmoid value across the 30 transformations. The results of such transformations can be seen in Figure \ref{fig:rand}. For lower magnitude of errors using the original test images seem to be better, however the situation is reversed when epsilon increases beyond 0.15. It appears that this method is more robust for perturbations of higher magnitude.
 
 \begin{figure}[h!]
-\includegraphics[width=\textwidth]{sgd_random}
+        \includegraphics[width=\textwidth]{sgd_random}
 		\caption{Accuracy in classification under FGSSM attacks using randomised crop-and-rescale transformations}
 		\label{fig:rand}
+\end{figure}
 
 \subsubsection{Defence GAN}
 \begin{figure}[h!]
