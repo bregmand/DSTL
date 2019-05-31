@@ -1,4 +1,5 @@
 \subsection{Universal adversarial training}
+In this part we discuss how to systematically train universal adversarial perturbations, i.e. single perturbations that are added to all inputs of a pre-trained neural network and that aim at causing as much damage as possible in terms of classification rates. In addition to this we then discuss strategies of how to simultaneously defend and attack, i.e. train parameters of a neural network and learn the universal adversarial perturbations at the same time. This way a network can be made robust towards a worst-case adversarial perturbation. The underlying optimisation problem requires the solution of a two-player min-max game.
 
 \subsubsection{A brief review of \cite{shafahi_universal_2018}}
 

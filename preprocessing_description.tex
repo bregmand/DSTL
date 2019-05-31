@@ -1,11 +1,11 @@
 \subsection{Preprocessing techniques}
 %In this section, we consider the attack information as noise in the image. We assume attackers tend to control the magnitude of their attacks so as not to be detected by the system, but make them effective enough to misguide the system to the wrong results. We then make use of this effect, and consider the problem from the image preprocessing perspective. We use different approaches, rescaling, bit-depth reduction, total variation and , to remove the attack or adversarial perturbations in the input data before we fit into the net, and also try to maintain enough information for our net to give the right results.
 
-In this section we consider a grey-box setting where the attacker knows the structure of the neural network for the image classifier, however during testing, we impose further transforms on test samples. This is designed to obscure the gradients so that adversarial perturbation effects can be reduced. We looked at a range of preprocessing techniques based on \cite{Guo18}: image resolution reduction, bit-depth reduction, total variation and randomised crop-and-rescale.
+In this section we consider a grey-box setting where the attacker knows the structure of the neural network for the image classifier, however during testing, we impose further transforms on test samples. This is designed to obscure the gradients so that adversarial perturbation effects can be reduced. We looked at a range of preprocessing techniques based on \cite{Guo18}: image resolution reduction, bit-depth reduction, total variation denoising and randomised crop-and-rescale.
 
 
 \subsubsection{Bit-Depth Reduction} %reference needed here
-Bit-Depth reduction approach \cite{DBLP:journals/corr/XuEQ17} is to reduce the color depth in bits, as a try to remove the adversarial attack but not significantly destroying the recognisability of the images at the same time. 
+The bit-depth reduction approach \cite{DBLP:journals/corr/XuEQ17} aims at reduciing the colour depth in bits, in order to remove the adversarial attack but to not significantly destroy the recognisability of the images at the same time. 
 
 Our input values are in the range [0,1]. We then apply the approach to reducing the image from 8 bits to i bits by, first multiplying the input data by ($2^i - 1$), then rounding to integers, and finally scaling the values back to the the range [0,1].
 
