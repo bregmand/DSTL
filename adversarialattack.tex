@@ -6,7 +6,7 @@ Training neural networks is expensive in terms of compute power. For a company l
 
 The Fast Gradient Sign Method (FGSM) \cite{Goodfellow14} is an adversarial attack that adds a small perturbation \(\eta\):
 \begin{equation}
-\eta = \epsilon \text{sign}(\nabla_x J(\theta,x,y)),
+\eta = \epsilon \text{sign}(\nabla_x J(\theta,x,y)),\label{eq:fgsm}
 \end{equation}
 to the images. Where \(\theta\) are the parameters of the network, \(x\) are the input data, \(y\) are the targets and \(J(\theta,x,y)\) is the loss function used. Note that the required gradient is easily computed through backpropagation if the network structure is known (white-box).
 

@@ -1,1 +1,16 @@
 \section{Introduction}
+Since Alexnet in 2012, neural networks have been central in the research into image classification and more general problem of computer vision. Alongside the positive developments, flaws in neural networks soon surfaced in the form of adversarial examples .
+
+Ever since the introduction of Alexnet in 2012 \cite{krizhevsky2012imagenet}, deep neural networks have been central to research in image classification as well as more general problems in computer vision. Deep neural networks are ubiquitous within image classification problems, often exhibiting greater classification accuracy relative to alternative methods. This can be attributed to the multilayer structure of deep networks, the convolutional layers. However, deep networks have been shown to be sensitive to small changes in the input data, often resulting in a significant drop of classification rates \cite{Szegedy13}. This is arguably an inherent feature of deep neural network, given the very non-convex nature of the prediction function represented by the network. Adversarial attacks exploit this vulnerability of deep neural networks to e.g. bypass security systems.
+
+In the following we give a brief description of the underlying problems, which is followed by an extensive literature review before we start discussing the hardening techniques of preprocessing, adversarial training and detection in greater detail in the Section \ref{sec:descriptionofapproaches}.
+
+\subsection{Problem description}
+
+There are different types of attacks on a system, some target the training of the network, and others focus on trained networks. Many different attack methods have emerged based on a varying amount of knowledge an attacker has of the network architecture. We have identified two relevant cases: white-box attacks and data poisoning that we discuss in greater detail in the following subsections. 
+
+%Before we continue to do so, we want to set the notation for the remainder of this section. In the following we aim at finding optimal parameters $\theta^\ast$ of some deep neural network architecture by minimising the objective function $J(\theta, x, y)$, i.e.
+%\begin{align*}
+%    \theta^\ast = \arg\min_{\theta} J(\theta, x, y) \, ,
+%\end{align*}
+%where $x, y$

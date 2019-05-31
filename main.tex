@@ -156,7 +156,7 @@ University of Cambridge Centre for Mathematical Sciences
 \begin{center}
     \textbf{Executive Summary}
 \end{center}
-Write the executive summary here. This is similar to an abstract for an academic paper and should be \textbf{SHORT}.It should include a very brief over-view of the problem, the approach taken and any key results.
+We studied various hardening techniques for image classifiers based on deep neural networks. As trained image classifies are usually vulnerable to adversarial attacks, making those classifiers robust against such attacks poses a key challenge. In the literature this process is known as hardening and in this report we discuss three different hardening approaches: preprocessing, universal adversarial training and detection. For each approach we discuss the underlying methodology, present numerical results and conclude with an outlook and discussions.
 \newpage
 %-------------------------------------------------------------------------------
 % Contributors
@@ -194,18 +194,13 @@ Write the executive summary here. This is similar to an abstract for an academic
 
 \input{introduction.tex}
 
-\section{Problem description}
-Since Alexnet in 2012, neural networks have been central in the research into image classification and more general problem of computer vision. Alongside the positive developments, flaws in neural networks soon surfaced in the form of adversarial examples \cite{Szegedy13}.
-
-There are different types of attacks on a system, some target the training of the network, and others focus on trained networks. Many different attack methods have emerged based on varying amount of knowledge an attacker has of the network architecture. We have identified the most relevant cases when the scenario at hand involves the outsourcing of training the neural networks. Over the course of the ESGI, we focus mainly on two types of attacks, white-box attacks like FGSM and data poisoning.
-
 \input{adversarialattack}
 
 \input{datapoisoning}
 
 \input{literaturereview}
 
-\section{Description of approaches}
+\section{Description of approaches}\label{sec:descriptionofapproaches}
 
 \input{preprocessing_description.tex}
 

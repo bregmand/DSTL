@@ -63,7 +63,7 @@ Despite the promising experimental results these pre-processing filters have sho
 
 
 
-\subsubsection{Total Variance Minimisation} 
+\subsubsection{Total Variation Minimisation} 
 Another preprocessing approach we consider is a compressed sensing approach that drop pixels via total variation minimisation \cite{Rudin:1992:NTV:142273.142312}. This method selects a small portion of pixels randomly, and then replace it by minimising the variation from pixels nearby. Strictly speaking, we first select pixels by sampling a Bernoulli random variable $X(i,j,k)$ for pixel at the location $(i,j,k)$, set the value $p$ to control the amount of pixels chosen to change, and maintain the pixel if $X(i,j,k) = 1$. Then we replace the values in the chosen pixels by minimising the variation of the whole input image, the so called total variation, 
 \begin{align}
 	\min_{\mathbf{z}}||(1 - X) \odot (\mathbf{z} - \mathbf{x})||_2 + \lambda_{TV}\cdot TV_p{\mathbf{z}}.

@@ -6,7 +6,7 @@ In this section we test the performance of the same network, trained using three
 
 \subsubsection{Layout}
 
-We have decided to run our simulations in python using the PyTorch package (cite?). We will run tests on the EMNIST data set of hand written numbers \cite{EMNIST_data}. These are gray scale $28 \times 28$ byte images with 10 classifications, the digits 0-9. The training set is of size 60000 and a test set of 20000 is set aside. We use three different training methods:
+We have decided to run our simulations in python using the PyTorch package (cite?). We will run tests on the MNIST data set of hand written digits \cite{EMNIST_data}. These are gray scale $28 \times 28$ byte images with 10 classifications, the digits 0-9. The training set is of size 60000 and a test set of 20000 is set aside. We use three different training methods:
 
 \begin{itemize}
 	\item vanilla training (with no defence against perturbation),
@@ -23,8 +23,8 @@ All the code for this project can be found with the report, along with the train
 There will be two network architectures used in this project, one for the image classifiers and one to generate perturbations for the sake of attacking. The image classifier has the following layers
 
 \begin{enumerate}
-	\item 1st convolution layer, with with kernal size 5 and extracting 10 features,
-	\item 2nd convolution layer, with with kernal size 5 and extracting 20 features,
+	\item 1st convolution layer, with with kernel size 5 and extracting 10 features,
+	\item 2nd convolution layer, with with kernel size 5 and extracting 20 features,
 	\item one layer of 50 nodes applying ReLU, and
 	\item an application of softmax to give a single classification output.
 \end{enumerate}
@@ -41,7 +41,7 @@ These architectures were chosen for convenience, we suggest the reader experimen
 Within the training a number of variables were chosen
 
 \begin{enumerate}
-	\item The learning rate, how far in the direction of the steepist decent we move.
+	\item The learning rate, how far in the direction of the steepest decent we move.
 	\item How much the attackers are allowed to perturb the image.
 	\item The cap for the loss MSE function, see \cite{shafahi_universal_2018} for further details.	
 	\item The momentum within the learning, how much it gets effected by the new change in direction.
