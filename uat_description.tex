@@ -1,13 +1,13 @@
-\subsection{Universal adversarial training}
+\subsection{Universal adversarial training}\label{sec:uniadvtrain}
 In this part we discuss how to systematically train universal adversarial perturbations, i.e. single perturbations that are added to all inputs of a pre-trained neural network and that aim at causing as much damage as possible in terms of classification rates. In addition to this we then discuss strategies of how to simultaneously defend and attack, i.e. train parameters of a neural network and learn the universal adversarial perturbations at the same time. This way a network can be made robust towards a worst-case adversarial perturbation. The underlying optimisation problem requires the solution of a two-player min-max game.
 
 \subsubsection{A brief review of \cite{shafahi_universal_2018}}
 
-Standard white-box adversarial attacks change the predicted class label of an image by tailoring small perturbations to it. On the other hand a universal perturbation attack is an update that can be added to any image (in a broad class) whilst still changing the predicted class label. As of this report there appears to have been little work done in the direction of defending against universal perturbation attacks. A study of this problem hs been carried out by Akhtar et al. \cite{akhtar_defense_2018} in which image pre-processing is usggested as a form of defence but it has been shown that this defense can be easily overcome if the attacker is aware that a defense network is being used \cite{carlini_adversarial_2017}. There is also recent work \cite{perolat_playing_2018} which models the defense as a two-player min-max game. Similar to usual adversarial training they iteratively generate a universal perturbation after each update of the DNN parameters which is very expensive. The approach in \cite{shafahi_universal_2018} also models the defense as a two-player min-max game but with a simple optimisation based universal attack which is much faster and more scalable.
+Standard white-box adversarial attacks change the predicted class label of an image by tailoring small perturbations to it. On the other hand, a universal perturbation attack is an update that can be added to any image (in a broad class) whilst still changing the predicted class label. As of this report there appears to have been little work done in the direction of defending against universal perturbation attacks. A study of this problem has been carried out by Akhtar et al. \cite{akhtar_defense_2018} in which image pre-processing is suggested as a form of defence but it has been shown that this defence can be easily overcome if the attacker is aware that a defence network is being used \cite{carlini_adversarial_2017}. There is also recent work \cite{perolat_playing_2018} which models the defence as a two-player min-max game. Similar to usual adversarial training they iteratively generate a universal perturbation after each update of the DNN parameters which is very expensive. The approach in \cite{shafahi_universal_2018} also models the defence as a two-player min-max game but with a simple optimisation based universal attack which is much faster and more scalable.
 
-The best known approach for producing universal perturbations is that of Moosavi-Dezfooli et al. \cite{moosavi-dezfooli_universal_2017}, in this one seeks small perturbations which fool the classifier on almost all data points on some sample. For this they search for a pertubation constrained by size (in some $\ell_p$-norm) and that by achieving a quantified fooling rate.  More precisely, given a training set of samples $X=\{ x_i | i=1,...,N \}$ and a network $f(w,\cdot)$ with frozen parameter $w$ it is proposed to find universal perturbations $\delta$ satisfying 
-$$\| \delta \| \leq \varepsilon, \quad \text{and} \quad \mathbb{P}(f(w, x) \neq f(w, x + \delta)) \geq 1-\xi,$$
-for some given parameter $\xi$. This is then solved by an iterative method, see Algorithm \ref{Alg_1} below, which relies on an expensive inner loop and an outer loop that is not guaranteed to converge.  
+The best known approach for producing universal perturbations is that of Moosavi-Dezfooli et al. \cite{moosavi-dezfooli_universal_2017}, in which one seeks to find a small perturbation that fools the classifier on as many data points as possible. For this they optimise for a constrained perturbation (in some $\ell_p$-norm) that achieves a quantified fooling rate.  More precisely, given a training set of samples $X=\{ x_i \, | \,  i=1,\ldots,N \}$ and a neural network $f(w,\cdot)$ with fixed parameters $w$ it is proposed to find universal perturbations $\delta$ satisfying 
+$$\| \delta \|_p \leq \varepsilon, \quad \text{and} \quad \mathbb{P}(f(w, x) \neq f(w, x + \delta)) \geq 1-\xi,$$
+for some given parameter $\xi$. This is then solved by an iterative method, see Algorithm \ref{Alg_1} below, which relies on an expensive inner loop and an outer loop that is not necessarily guaranteed to converge.  
 
 %\includegraphics[scale=0.2,angle=-90,origin=c]{Alg_1.pdf}
 
@@ -51,11 +51,13 @@ for some given parameter $\xi$. This is then solved by an iterative method, see 
 \end{algorithmic}
 \end{algorithm}
 
-In \cite{shafahi_universal_2018} the following optimisation problem is instead considered, 
-$$\max_{\delta} \mathcal{L} (w,\delta) = \frac{1}{N} \sum_{i=1}^N \ell(w,x_i + \delta) \quad \text{s.t.} \quad \| \delta \|_p \leq \varepsilon,$$ 
-where $\ell$ is a loss function representing the loss used to train a DNN. This simple formulation searches for a universal perturbation which maximises the training loss. Unfortunately in this set-up the cross-entropy loss is unbounded from above which can mean a perturbation that misclassifies just a single image can maximise the above problem. To avoid this it is suggested that one should clip the entropy loss as follows, 
+\noindent In \cite{shafahi_universal_2018} the following optimisation problem is instead considered: 
+\begin{align}
+\max_{\delta} \mathcal{L} (w,\delta) = \frac{1}{N} \sum_{i=1}^N \ell(w,x_i + \delta) \quad \text{s.t.} \quad \| \delta \|_p \leq \varepsilon \, .\label{eq:uniadvpert}
+\end{align}
+Here $\ell$ is a loss function representing the loss used to train a DNN that is parametrised with pre-trained parameters $w$. The inputs of the DNN are denoted by $x_i$ and we assume to have access to a set of $N$ input samples $\{x_1, \ldots, x_N\}$. This simple formulation searches for a universal perturbation which maximises the training loss. Unfortunately, in this set-up some of the loss functions, e.g. the cross-entropy loss function, are unbounded from above which can lead to perturbations that misclassify only a single image but already maximise the above problem. To avoid this it is suggested that one should clip the entropy loss as follows, 
 $$\tilde{\ell}(w,x_i + \delta) = \min \{ \ell(w,x_i+\delta), \beta \}.$$ 
-This idea is based on a standard stochastic gradient method that comes with convergence guarantees when a decreasing learning rate is used. They directly solve the maximisation problem by SGM, each iteration begins by using gradient ascent to update the universal perturbation to maximise loss, then this perturbation is projected onto the $\ell_p$-norm ball to prevent it from growing too large, this is summarised in Algorithm \ref{Alg_2} below. This method is tested by attacking a naturally trained WideResnet CIFAR-10 model whichh has a clean test accuracy of 95.2\%. They found that accuracies after adding universal perturbation (with $\varepsilon =8$) were 42.56\% for SGD perturbation, 13.08\% for MSGD, 13.3\% for ADAM and 13.17\% for PGD.
+The authors of \cite{shafahi_universal_2018} attempt to solve \eqref{eq:uniadvpert} with a modification of a projected gradient method. Each iteration is based on a gradient ascent step to update the universal perturbation to maximise the loss, followed by a projection onto the $\ell_p$-norm ball to prevent it from growing too large. However, the authors also experiment with replacing the gradient ascent step with a modification in the flavour of certain adversarial attacking rules such as the FGSM. The steps are summarised in Algorithm \ref{Alg_2} below. This method is tested by attacking a naturally trained WideResnet CIFAR-10 model, which has a standard test accuracy of 95.2\%. They found that the test accuracy after adding universal perturbation (with $\varepsilon =8$) drops to 42.56\% for SGD perturbation, 13.08\% for MSGD, 13.3\% for ADAM and 13.17\% for PGD (see \cite{shafahi_universal_2018} for details).
 \begin{algorithm}
 \caption{Standard Iterative Solver for Universal Perturbations}\label{Alg_2}
 \begin{algorithmic}[1]
@@ -64,7 +66,7 @@ This idea is based on a standard stochastic gradient method that comes with conv
 %\While{$\mathbb{P}((f(w, x) \neq f(w, x + \delta)) \geq 1-\xi$}  
 %\EndWhile
 
-\For{epoch$-1,...,N_{ep}$} 
+\For{$\text{epoch} = 1,2, \ldots$} 
 
 \For{minibatch $B \subset X$} \\
 \hspace{\algorithmicindent} Update $\delta$ with gradient variant $\delta \gets \delta + g$ \\
@@ -76,14 +78,18 @@ This idea is based on a standard stochastic gradient method that comes with conv
 \end{algorithmic}
 \end{algorithm}
 
-The next step is to train against universal perturbations, this is done by modelling the problem as a two-player zero sum game. This is formulated as a min-max optimisation problem, $$ \min_w \max_{\delta} \frac1N \sum_{i = 1}^N \ell(w, x_i + \delta) \quad \text{subject to} \quad \| \delta \|_p \leq \varepsilon \, ,$$ where $w$ represents the network weights, $X=\{x_i|i =1,...,N \}$ represents the training samples (of batch size $N$) and $\ell$ is the loss function. The authors propose to solve this problem by alternating stochastic gradient methods, iterating alternate updates of the network weights using gradient descent with updates of the universal perturbation using gradient ascent. Notice here that $w$ and $\delta$ are updated only once per setp with the updates accumulating for both $w$ and $\delta$, in particular there is no expensive inner loop. They found that the following FGSM update rule (for updating $\delta$) was most effective when combined with the SGD optimiser for updating $w$,
+The next logical step is to simultaneously train against universal perturbations, which is done by modelling the problem as a two-player zero sum game. This is formulated as a min-max optimisation problem of the form 
+\begin{align} \min_w \max_{\delta} \frac1N \sum_{i = 1}^N \ell(w, x_i + \delta) \quad \text{subject to} \quad \| \delta \|_p \leq \varepsilon \, , \label{eq:advattackdefence1}
+\end{align}
+where $w$ represents the network weights, $X=\{x_i \, | \, i =1,\ldots,N \}$ the training samples and $\ell$ denotes the loss function. The authors propose to solve this problem by alternating stochastic gradient methods, iterating in an alternating fashion to update the network weights with a descent strategy and the universal perturbation with an ascent strategy. Notice here that $w$ and $\delta$ are updated only once per step with the updates accumulating for both $w$ and $\delta$, in particular there is no expensive inner loop. As mentioned earlier, the authors decided to modify the update for the perturbation with the following FGSM update rule:
 $$\text{FGSM} \quad \delta \leftarrow \delta + \varepsilon \, \text{sign}(\mathbb{E}_{x \in B}[\nabla_{\delta} \ell(w, x + \delta)]).$$ 
-The training curves for the universal adversarial training process on the Wide Resnet model using the CIFAR-10 dataset is presented. Below we include the first curve of figure 4 of \cite{shafahi_universal_2018} which shows the training cuvre with FGSM used for the universal perturbation maximisation.
-\begin{figure}[b] 
-\caption{The training cuvre with FGSM used for the universal perturbation maximisation}
-%\includegraphics[scale=.41,angle=-90,origin=c]{Fig_4.pdf}
-\centering
-\end{figure}
+Note, however, that this update rule is not consistent with solving \eqref{eq:advattackdefence1}.
+%The training curves for the universal adversarial training process on the Wide Resnet model using the CIFAR-10 dataset is presented. Below we include the first curve of figure 4 of \cite{shafahi_universal_2018} which shows the training cuvre with FGSM used for the universal perturbation maximisation.
+%\begin{figure}[b] 
+%\caption{The training cuvre with FGSM used for the universal perturbation maximisation}
+% %\includegraphics[scale=.41,angle=-90,origin=c]{Fig_4.pdf}
+%\centering
+%\end{figure}
 \begin{algorithm}
 \caption{Adversarial Training for Universal Perturbations}\label{Alg_3}
 
@@ -95,7 +101,7 @@ The training curves for the universal adversarial training process on the Wide R
 %\While{$\mathbb{P}((f(w, x) \neq f(w, x + \delta)) \geq 1-\xi$}  
 %\EndWhile
 
-\For{epoch$-1,...,N_{ep}$} 
+\For{$\text{epoch} = 1,2, \ldots$} 
 
 \For{minibatch $B \subset X$} \\
 \hspace{\algorithmicindent} Update $w$ with momentum stochastic gradient \\
@@ -111,18 +117,43 @@ The training curves for the universal adversarial training process on the Wide R
 \end{algorithmic}
 \end{algorithm}
 
-To test the robustness the authors compare the universally trained model's robustness with other hardened models against white-box attacks. These models are attacked with both universal perturbation attacks and per-instance attacks, specifically FGSM, R-FGSM and PGD (projected gradient descent) are used. It is important to remark that PGD is an attack which iteratively applies FGSM multiple times and is considered to be one of the strongest per-instance attacks. There are models which are PGD trained and effective, but this is time consuming and does not appear to scale well. The White-box performance of hardened WideResnet models trained on CIFAR-10 are shown in figure \ref{table} below.
+To test the robustness of the trained network, the authors compare the universally trained model's robustness with other hardened models against white-box attacks. These models are attacked with both universal perturbation attacks and per-instance attacks; specifically FGSM, R-FGSM and PGD (projected gradient descent) are used. It is important to remark that PGD is an attack which iteratively applies FGSM multiple times and is considered to be one of the strongest per-instance attacks. There are models which are PGD-trained and effective, but this is time consuming and does not appear to scale well. %The White-box performance of hardened WideResnet models trained on CIFAR-10 are shown in figure \ref{table} below.
 %\begin{wrapfigure}{r}{0.25\textwidth}
    % \centering
     %\includegraphics[width=0.25\textwidth,scale=.3]{blackboxtable_1.png}
 %\end{wrapfigure} 
-As one can see the model is most robust against universal perturbation attacks as one would expect. Interestingly it has moderate robustness against PGD attacks whilst having similar computational costs to the non-iterative FGSM and R-FGSM attacks both of which PGD fools almost every time. 
-\begin{figure}[b] \label{table}
-\caption{ The White-box performance of hardened WideResnet models trained on CIFAR-10}
+%As one can see the model is most robust against universal perturbation attacks as one would expect. Interestingly it has moderate robustness against PGD attacks whilst having similar computational costs to the non-iterative FGSM and R-FGSM attacks both of which PGD fools almost every time. 
+%\begin{figure}[b] \label{table}
+%\caption{ The White-box performance of hardened WideResnet models trained on CIFAR-10}
 %\includegraphics[width=7.5cm]{blackboxtable_1.png}
-\centering
-\end{figure}
+%\centering
+%\end{figure}
 
 %\includegraphics[scale=.41,angle=-90,origin=c]{blackboxtable_1.pdf}
 
 Robustness of the universally trained model in the black-box attack scenario is also tested. It is found that they are also quite resistant to black-box per-instance attacks – achieving resistance comparable to 7-step PGD adversarial training at a fraction of the cost. Furthermore, per-instance adversarial examples built to attack the universally hardened model transfer to other black-box models very well.
+
+In addition to \eqref{eq:advattackdefence1} we furthermore want to consider a second model to simultaneously train perturbations and defend against those perturbations:
+\begin{align}
+    \min_w \max_{\delta} \frac{1}{2N} \sum_{i = 1}^N \left[ \ell(w, x_i) + \ell(w, x_i + \delta) \right] \quad \text{subject to} \quad \| \delta \|_p \leq \varepsilon \, , \label{eq:advattackdefence2}
+\end{align}
+The motivation behind \eqref{eq:advattackdefence2} is to ensure that we do not learn network weights that perform extremely well on perturbed inputs but not on the original inputs at the same time, which is a problem that we have encountered in practice. Focusing on a bound of the perturbation in terms of the Euclidean norm, we approach to solve \eqref{eq:advattackdefence2} via Algorithm \ref{Alg_4}.
+
+\begin{algorithm}
+\caption{Modified Adversarial Training for Problem \eqref{eq:advattackdefence2}}\label{Alg_4}
+
+ \textbf{Input}: : Training samples $X$, perturbation bound $\varepsilon$, learning rate $\tau$\\
+\begin{algorithmic}[1]
+
+\For{$\text{epoch} = 1,2, \ldots$} 
+
+\For{minibatch $B \subset X$} \\
+\hspace{\algorithmicindent} Update $w$ via \\
+\hspace{\algorithmicindent} \hspace{\algorithmicindent} $w \gets w - \tau \, \mathbb{E}_{x \in B} \left[\frac12 \left( \nabla_w \ell(w,x) + \nabla_w \ell(w,x+\delta) \right)\right]$ \\
+\hspace{\algorithmicindent} Update $\delta$ via \\
+\hspace{\algorithmicindent} \hspace{\algorithmicindent} $\delta \gets \frac{\delta + \tau \, \mathbb{E}_{x \in B}\left[\frac12 \nabla_{\delta} \ell(w,x + \delta)\right]}{\left\| \delta + \tau \, \mathbb{E}_{x \in B}\left[\frac12 \nabla_{\delta} \ell(w,x + \delta)\right]  \right\|_2}$ \\
+
+\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}

@@ -5,11 +5,11 @@ In this section we consider a grey-box setting where the attacker knows the stru
 
 
 \subsubsection{Bit-Depth Reduction} %reference needed here
-The bit-depth reduction approach \cite{DBLP:journals/corr/XuEQ17} aims at reduciing the colour depth in bits, in order to remove the adversarial attack but to not significantly destroy the recognisability of the images at the same time. 
+The bit-depth reduction approach \cite{DBLP:journals/corr/XuEQ17} aims at reducing the colour depth in bits, in order to remove the adversarial attack but to not significantly destroy the recognisability of the images at the same time. 
 
 Our input values are in the range [0,1]. We then apply the approach to reducing the image from 8 bits to i bits by, first multiplying the input data by ($2^i - 1$), then rounding to integers, and finally scaling the values back to the the range [0,1].
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
 	\centering
 	\begin{subfigure}{.35\textwidth}
 		\includegraphics[width=\textwidth]{original7.png}

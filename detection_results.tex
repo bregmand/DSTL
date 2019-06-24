@@ -1,7 +1,7 @@
 \subsection{Detection}
 
 By training the two classifiers (SVM and Logistic Regression) we obtain very similar results. In both cases the training accuracy is very close to, or even $100\%$. We do multiple runs since the data used to train $\mathcal{C}$ is drawn at random. This suggests that the decision boundary is very far from the regions of interest for the two classes, meaning that the LID is a good measure for detecting adversarial attacks. We next considering a test set, composed of about 2,000 images for each of the adversarial and non-adversarial attacks. We obtain no false positives on either of the classifiers, and a single false negative. This is shown in Figure .
-\begin{figure}
+\begin{figure}[!h]
 \centering
 \includegraphics[scale=0.8]{eightthree.png}
 \caption{Perturbed image of 8, misclassified as a 3.}

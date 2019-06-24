@@ -14,7 +14,7 @@ where $\mathbf{X} \in \mathbb{R}^n$ is the flattened image and $y$ is the true c
 
 \par 
 
-We consider identifying FGSM attacks for a network a four-layer network consisting of two convolutional layers followed by two fully-connected layers. The first convolutional layer takes as input a one-channel, $28\times 28$ image and outputs five channels based on a $5\times 5$ kernel. The second layer outputs 20 channels, also based on a $5\times 5$ kernel, with randomly-selected dropouts. We apply max-pooling to $2\times 2$ grids of the output of each convolutional layer. The first fully-connected layer takes as input a vector $\in \mathbb{R}^{320}$ and outputs in $\mathbb{R}^{50}$, before applying a ReLu activation function to this output. The final layer uses a log-softmax function to output the classification probabilities. We consider the MNIST dataset; thus the output of the final layer is $\in [0,1]^{10}$.
+We consider identifying FGSM attacks for a network a four-layer network consisting of two convolutional layers followed by two fully-connected layers. The first convolutional layer takes as input a one-channel, $28\times 28$ image and outputs five channels based on a $5\times 5$ kernel. The second layer outputs 20 channels, also based on a $5\times 5$ kernel, with randomly-selected dropouts. We apply max-pooling to $2\times 2$ grids of the output of each convolutional layer. The first fully-connected layer takes as input a vector in $\mathbb{R}^{320}$ and outputs in $\mathbb{R}^{50}$, before applying a ReLu activation function to this output. The final layer uses a log-softmax function to output the classification probabilities. We consider the MNIST dataset; thus the output of the final layer is in $[0,1]^{10}$.
 
 \subsubsection{Approach}
 
